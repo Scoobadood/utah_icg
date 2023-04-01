@@ -1,6 +1,11 @@
 #include "object.h"
 #include "spdlog/spdlog-inl.h"
+
+#ifdef __APPLE__
 #include "OpenGL/gl3.h"
+#else
+#include "GL3/gl3.h"
+#endif
 
 
 namespace {
