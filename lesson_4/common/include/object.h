@@ -6,20 +6,23 @@
 
 class Object {
 public:
-  Object(const std::vector<float> & data);
+  Object(const std::vector<float> & vertices,
+         const std::vector<float> & colours);
   ~Object();
 
   void main_loop();
 
 private:
-  void init_buffers(const std::vector<float> & data);
+  void init_buffers(const std::vector<float> & vertices,
+                    const std::vector<float> & colours);
   void destroy_buffers();
   void init_shader();
 
   GLuint vao_;
-  GLuint vbo_;
+  GLuint vbo_pos_;
+  GLuint vbo_clr_;
   std::shared_ptr<Shader> shader_;
-  int32_t num_vertices_;
+  int32_t num_vertices_{};
 };
 
 #endif //UTAH_ICG_OBJECT_H

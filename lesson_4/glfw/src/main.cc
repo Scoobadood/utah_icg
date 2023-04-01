@@ -67,7 +67,15 @@ int main(int argc, char *argv[]) {
                   -0.8, 0.4, 0.0,
                   0.8, -0.4, 0.0,
                   -0.8, -0.4, 0.0,
-          }
+          },
+          std::vector<float>{
+                  1., 0., 0., 1., // Red
+                  1., 1., 0., 1., //Yellow
+                  0., 1., 0., 1.,
+                  0., 1., 1., 1.,
+                  0., 0., 1., 1.,
+                  1., 0., 1., 1.
+          },
   };
 
   while (!glfwWindowShouldClose(window)) {
