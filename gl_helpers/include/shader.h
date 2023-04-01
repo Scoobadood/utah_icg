@@ -10,6 +10,8 @@
 
 #include "glm/glm.hpp"
 
+#include <string>
+
 class Shader {
 public:
   // With geometry and source
