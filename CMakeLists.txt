@@ -30,8 +30,16 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG        main
 )
+# GLM
+option(GLM_TEST_ENABLE "Disable" OFF)
+FetchContent_Declare(
+        glm
+        GIT_REPOSITORY https://github.com/g-truc/glm
+        GIT_TAG 0.9.9.8
+        GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(googletest spdlog glm)
 
-FetchContent_MakeAvailable(googletest spdlog)
 include_directories(${spdlog_SOURCE_DIR}/include)
 
 
