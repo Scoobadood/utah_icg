@@ -2,8 +2,11 @@
 #define GLHELPERS_SHADER_H
 
 #include <string>
+#ifdef __APPLE__
 #include "OpenGL/gl3.h"
-#include "glm/glm.hpp"
+#else
+#include "GL3/gl3.h"
+#endif#include "glm/glm.hpp"
 
 class Shader {
 public:
