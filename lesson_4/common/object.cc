@@ -1,13 +1,6 @@
 #include "object.h"
 #include "spdlog/spdlog-inl.h"
 
-#ifdef __APPLE__
-#include "OpenGL/gl3.h"
-#else
-#include "GL/gl.h"
-#include "GL/glext.h"
-#endif
-
 namespace {
   const char *vs_source[] = {
           R"(

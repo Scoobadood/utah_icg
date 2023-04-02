@@ -6,10 +6,9 @@
  * - Respond to input.
  */
 
-#include "spdlog/spdlog-inl.h"
-#include <GLUT/glut.h>
-
 #include "object.h"
+
+#include "main.h"
 
 struct State {
   std::shared_ptr<Object> obj;
@@ -59,6 +58,13 @@ void idle_handler() {
 
 int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
+
+  // Set OGL version on non-Apple platforms
+#ifndef __APPLE__
+  glutInitContextVersion( 4, 1 );
+  glutInitContextProfile( GLUT_CORE_PROFILE );
+#endif
+
 
   /*
    * Note use of GLUT_3_2_CORE_PROFILE which is what Macos requires
