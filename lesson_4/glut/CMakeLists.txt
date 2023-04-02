@@ -6,8 +6,12 @@ ELSE()
 ENDIF (APPLE)
 
 add_executable(test_glut
-        src/main.cc main.h
+        src/main.cc include/main.h
         )
+
+target_include_directories(test_glut
+        PRIVATE
+        include)
 
 
 target_link_libraries(test_glut
