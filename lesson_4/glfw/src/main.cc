@@ -6,8 +6,10 @@
  * - Respond to input.
  */
 
-#include "spdlog/spdlog-inl.h"
 #include "object.h"
+
+#include "spdlog/spdlog-inl.h"
+
 #include "main.h"
 
 void special_keyboard_handler(GLFWwindow *window, int key, int scancode, int action, int mods) {}

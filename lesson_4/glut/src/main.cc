@@ -6,8 +6,9 @@
  * - Respond to input.
  */
 
-#include "main.h"
 #include "object.h"
+
+#include "main.h"
 
 struct State {
   std::shared_ptr<Object> obj;
