@@ -13,7 +13,6 @@ target_include_directories(test_glut
         PRIVATE
         include)
 
-
 target_link_libraries(test_glut
         PRIVATE
         ${GLUT_LIBRARY}

@@ -47,13 +47,12 @@ FetchContent_Declare(
         GIT_PROGRESS TRUE
 )
 #GLEW
-FetchContent_Declare(
-        glew
-        GIT_REPOSITORY git@github.com:nigels-com/glew.git
-        GIT_TAG glew-2.2.0
-        GIT_PROGRESS TRUE
-)
-FetchContent_MakeAvailable(googletest spdlog glm freeglut glew)
+find_package(GLEW REQUIRED)
+FetchContent_MakeAvailable(googletest spdlog glm freeglut)
+
+message(ERROR ${GLEW_INCLUDE_DIRS})
+message(ERROR ${GLEW_LIBRARIES})
+
 
 include_directories(${spdlog_SOURCE_DIR}/include)
 
