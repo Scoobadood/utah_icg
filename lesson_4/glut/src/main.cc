@@ -6,9 +6,7 @@
  * - Respond to input.
  */
 
-#include "spdlog/spdlog-inl.h"
-#include <GLUT/glut.h>
-
+#include "main.h"
 #include "object.h"
 
 struct State {

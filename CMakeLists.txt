@@ -38,7 +38,15 @@ FetchContent_Declare(
         GIT_TAG 0.9.9.8
         GIT_PROGRESS TRUE
 )
-FetchContent_MakeAvailable(googletest spdlog glm)
+# FreeGLUT
+add_definitions(-DGL_SILENCE_DEPRECATION)
+FetchContent_Declare(
+        freeglut
+        GIT_REPOSITORY https://github.com/FreeGLUTProject/freeglut
+        GIT_TAG v3.4.0
+        GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(googletest spdlog glm freeglut)
 
 include_directories(${spdlog_SOURCE_DIR}/include)
 

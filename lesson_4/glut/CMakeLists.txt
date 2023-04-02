@@ -1,10 +1,12 @@
 ## Supress Apple OpenGL messages
 IF (APPLE)
     FIND_LIBRARY(GLUT_LIBRARY GLUT)
+ELSE()
+    set(GLUT_LIBRARY freeglut)
 ENDIF (APPLE)
 
 add_executable(test_glut
-        src/main.cc
+        src/main.cc main.h
         )
 
 
