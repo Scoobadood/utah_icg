@@ -4,7 +4,7 @@
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
-#include "GL/glut.h"
+#include "GL/freeglut_ext.h"
 #define GLUT_3_2_CORE_PROFILE 0
 #endif
 
