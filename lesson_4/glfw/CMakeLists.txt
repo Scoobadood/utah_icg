@@ -20,4 +20,5 @@ target_link_libraries(test_glfw
         PRIVATE
         glfw
         Lesson4
+        ${GLEW_LIBRARIES}
 )
