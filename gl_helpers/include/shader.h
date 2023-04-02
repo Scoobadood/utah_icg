@@ -1,8 +1,16 @@
 #ifndef GLHELPERS_SHADER_H
 #define GLHELPERS_SHADER_H
 
-#include "glm/glm.hpp"
 
+#ifdef __APPLE__
+#include "OpenGL/gl3.h"
+#else
+#include "GL/glew.h"
+#include "GL/glext.h"
+#include "GL/gl.h"
+#endif
+
+#include "glm/glm.hpp"
 #include <string>
 
 class Shader {
