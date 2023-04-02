@@ -7,11 +7,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glfw)
 
 add_executable(test_glfw
-        src/main.cc
+        src/main.cc include/main.h
         )
 
 target_include_directories(test_glfw
         PRIVATE
+        include
         ${glfw3_SOURCE_DIR}/include
 )
 
