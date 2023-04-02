@@ -53,43 +53,43 @@ inline GLint get_uniform_loc_with_logging(const char *type, GLuint prog_id, cons
   return loc;
 }
 
-void Shader::set_vec3(const std::string &name, const glm::vec3 &vec) const {
+void Shader::set_uniform(const std::string &name, const glm::vec3 &vec) const {
   auto loc = get_uniform_loc_with_logging("vec3", id_, name.c_str());
   glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(vec));
 }
 
-void Shader::set_mat4(const std::string &name, const glm::mat4 &mat) const {
+void Shader::set_uniform(const std::string &name, const glm::mat4 &mat) const {
   auto loc = get_uniform_loc_with_logging("matrix4fv", id_, name.c_str());
   glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
-void Shader::set_float(const std::string &name, float f) const {
+void Shader::set_uniform(const std::string &name, float value) const {
   auto loc = get_uniform_loc_with_logging("1f", id_, name.c_str());
-  glUniform1f(loc, f);
+  glUniform1f(loc, value);
 }
 
-void Shader::set_int(const std::string &name, int i) const {
+void Shader::set_uniform(const std::string &name, int value) const {
   auto loc = get_uniform_loc_with_logging("1i", id_, name.c_str());
-  glUniform1i(loc, i);
+  glUniform1i(loc, value);
 }
 
-void Shader::set4iv(const std::string &name, int32_t count, const GLint *v4) const {
+void Shader::set_uniform(const std::string &name, int32_t count, const GLint *v4) const {
   auto loc = get_uniform_loc_with_logging("4iv", id_, name.c_str());
   glUniform4iv(loc, count, v4);
 }
 
-void Shader::set4b(const std::string &name, bool v0[4]) const {
+void Shader::set_uniform(const std::string &name, bool v0[4]) const {
   auto loc = get_uniform_loc_with_logging("4b", id_, name.c_str());
   glUniform4iv(loc, 1, (const GLint *) v0);
 }
 
 
-void Shader::set2ui(const std::string &name, GLuint v0, GLuint v1) const {
+void Shader::set_uniform(const std::string &name, GLuint v0, GLuint v1) const {
   auto loc = get_uniform_loc_with_logging("2ui", id_, name.c_str());
   glUniform2ui(loc, v0, v1);
 }
 
-void Shader::set_float(const std::string &name, float f0, float f1, float f2) const {
+void Shader::set_uniform(const std::string &name, float f0, float f1, float f2) const {
   auto loc = get_uniform_loc_with_logging("3f", id_, name.c_str());
   glUniform3f(loc, f0, f1, f2);
 }
