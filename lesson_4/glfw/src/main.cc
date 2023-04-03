@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
 
+
   // Window creation
   auto window = glfwCreateWindow(800, 600,
                                  "My Window",
@@ -53,7 +54,11 @@ int main(int argc, char *argv[]) {
   // Create window with graphics context
   glfwMakeContextCurrent(window);
 
-
+  // Need context before we do this.
+  GLenum err = glewInit();
+  if( GLEW_OK != err) {
+    spdlog::critical("Error: {}", (const char *)glewGetErrorString(err));
+  }
   glfwSwapInterval(1); // Enable vsync
 
   glfwSetWindowSizeCallback(window, window_reshape_handler);
