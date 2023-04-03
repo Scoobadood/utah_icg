@@ -85,12 +85,13 @@ int main(int argc, char *argv[]) {
   glutInitWindowPosition(100, 100);
   glutCreateWindow("My window");
 
-
-    // Need context before we do this.
-    GLenum err = glewInit();
-    if( GLEW_OK != err) {
-        spdlog::critical("Error: {}", (const char *)glewGetErrorString(err));
-    }
+#ifndef __APPLE__
+  // Need context before we do this.
+  GLenum err = glewInit();
+  if( GLEW_OK != err) {
+      spdlog::critical("Error: {}", (const char *)glewGetErrorString(err));
+  }
+#endif
 
   // Callbacks - AFTER Window Creation!
   glutKeyboardFunc(keyboard_handler);
