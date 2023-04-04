@@ -168,12 +168,18 @@ bool parse_face(const std::string &args, int32_t *vertices,
       return false;
     }
   }
+  // Correct all indices as they are off by one from OBJ file
+  for (auto i = 0; i < 3; ++i) {
+    vertices[i]--;
+    if (include_normals) normals[i]--;
+    if (include_tex_coords) tex_coords[i]--;
+  }
   return true;
 }
 
 bool parse_raw_data(std::ifstream &f,
-                    std::vector<std::tuple<float, float, float>> vertices,
-                    std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> faces,
+                    std::vector<std::tuple<float, float, float>> &vertices,
+                    std::vector<std::vector<std::tuple<int32_t, int32_t, int32_t>>> &faces,
                     bool include_normals,
                     std::vector<std::tuple<float, float, float>> *normals,
                     bool include_tex_coords,
@@ -239,8 +245,8 @@ bool parse_raw_data(std::ifstream &f,
       spdlog::warn("  ignored : {}", line);
     }
   }
-  if( vertices.empty()) {
-    spdlog::error( "  no vertices found.");
+  if (vertices.empty()) {
+    spdlog::error("  no vertices found.");
     return false;
   }
   return true;
@@ -256,6 +262,7 @@ bool load_obj(const std::string &obj_file_name,
               uint32_t &vao,
               uint32_t &vbo,
               uint32_t &ebo,
+              uint32_t &num_elements,
               uint32_t pos_attr,
               bool include_normals,
               uint32_t norm_attr,
@@ -282,8 +289,12 @@ bool load_obj(const std::string &obj_file_name,
                       include_textures, &tex_coords)) {
     return false;
   }
+  spdlog::info("Found {:3} vertices", vertices.size());
+  if (include_normals) spdlog::info("      {:3} normals", normals.size());
+  if (include_textures) spdlog::info("      {:3} tex_coords", tex_coords.size());
+  spdlog::info("      {:3} faces", faces.size());
 
-  spdlog::info("Identifying unique faces");
+  spdlog::info("2. Identifying unique faces");
   vector<float> vertex_data;
   vector<int32_t> eidx;
 
@@ -320,8 +331,7 @@ bool load_obj(const std::string &obj_file_name,
     }
   }
 
-  //
-  spdlog::info("Building VAO, VBO and EBO");
+  spdlog::info("3. Building VAO, VBO and EBO");
   // VAO
 
   glGenVertexArrays(1, &vao);
@@ -331,10 +341,9 @@ bool load_obj(const std::string &obj_file_name,
   auto num_vertices = gidx;
 
   // Vertex locations
-  GLuint buffs[2];
-  glGenBuffers(2, buffs);
+  glGenBuffers(1, &vbo);
+  glGenBuffers(1, &ebo);
 
-  vbo = buffs[0];
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, vtx_sz * num_vertices, vertex_data.data(), GL_STATIC_DRAW);
   glEnableVertexAttribArray(pos_attr);
@@ -349,8 +358,9 @@ bool load_obj(const std::string &obj_file_name,
     glVertexAttribPointer(tx_attr, 2, GL_FLOAT, GL_FALSE, vtx_sz, (GLvoid *) 24);
   }
 
-  ebo = buffs[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, eidx.size() * sizeof(int32_t), eidx.data(), GL_STATIC_DRAW);
+
+  num_elements = eidx.size();
   return true;
 }
