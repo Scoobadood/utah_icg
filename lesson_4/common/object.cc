@@ -1,5 +1,6 @@
 #include "object.h"
 #include "spdlog/spdlog-inl.h"
+#include "mesh.h"
 
 namespace {
   const char *vs_source[] = {
@@ -31,11 +32,29 @@ void main() {
 }
 
 
-Object::Object(const std::vector<float> &vertices,
-               const std::vector<float> &colours) {
+Object::Object(const std::string& file_name,
+       bool include_normals,
+       bool include_tex_coords){
   init_shader();
-  init_buffers(vertices, colours);
+  if (!shader_->is_good()) {
+    return;
+  }
+
+  auto pos_attr = shader_->get_attribute_location("pos");
+  if( pos_attr == -1) {
+    spdlog::error("Invalid attribute location pos:{}", pos_attr);
+    return;
+  }
+
+  uint32_t norm_attr=0, tx_attr=0;
+  load_obj(file_name, vao_, vbo_, ebo_,
+           num_elements_,
+
+           pos_attr,
+           false, norm_attr,
+           false, tx_attr);
 }
+
 
 Object::~Object() {
   destroy_buffers();
@@ -46,49 +65,12 @@ void Object::main_loop() {
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  shader_->use();
-  glPointSize(10.0f);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-}
-
-void
-Object::init_buffers(const std::vector<float> &vertices,
-                     const std::vector<float> &colours) {
-  if (!shader_->is_good()) {
-    return;
-  }
-
-  auto pos_attr = shader_->get_attribute_location("pos");
-  auto clr_attr = shader_->get_attribute_location("clr");
-  if (pos_attr == -1 || clr_attr == -1) {
-    spdlog::error("Invalid attribute location pos:{}, clr:{}", pos_attr, clr_attr);
-    return;
-  }
-
-  // VAO
-  glGenVertexArrays(1, &vao_);
   glBindVertexArray(vao_);
 
+  shader_->use();
+  glPointSize(10.0f);
 
-  long sz = vertices.size() * sizeof(float);
-  num_vertices_ = sz / 3;
-
-  // Vertex locations
-  GLuint buffs[2];
-  glGenBuffers(2, buffs);
-
-  vbo_pos_ = buffs[0];
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_pos_);
-  glBufferData(GL_ARRAY_BUFFER, sz, vertices.data(), GL_STATIC_DRAW);
-  glEnableVertexAttribArray(pos_attr);
-  glVertexAttribPointer(pos_attr, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) 0);
-
-  // Vertex colours
-  vbo_clr_ = buffs[1];
-  glBindBuffer(GL_ARRAY_BUFFER, vbo_clr_);
-  glBufferData(GL_ARRAY_BUFFER,num_vertices_*4, colours.data(), GL_STATIC_DRAW);
-  glEnableVertexAttribArray(clr_attr);
-  glVertexAttribPointer(clr_attr, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *) 0);
+  glDrawElements(GL_POINTS, num_elements_, GL_INT, (void *)nullptr);
 }
 
 void
@@ -98,7 +80,7 @@ Object::init_shader() {
 
 void
 Object::destroy_buffers() {
-  glDeleteBuffers(1, &vbo_pos_);
-  glDeleteBuffers(1, &vbo_clr_);
+  glDeleteBuffers(1, &vbo_);
+  glDeleteBuffers(1, &ebo_);
   glDeleteBuffers(1, &vao_);
 }

@@ -68,24 +68,8 @@ int main(int argc, char *argv[]) {
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, special_keyboard_handler);
 
-  Object obj{
-          {
-                  -0.8, 0.4, 0.0,
-                  0.8, 0.4, 0.0,
-                  0.8, -0.4, 0.0,
-                  -0.8, 0.4, 0.0,
-                  0.8, -0.4, 0.0,
-                  -0.8, -0.4, 0.0,
-          },
-          std::vector<float>{
-                  1., 0., 0., 1., // Red
-                  1., 1., 0., 1., //Yellow
-                  0., 1., 0., 1.,
-                  0., 1., 1., 1.,
-                  0., 0., 1., 1.,
-                  1., 0., 1., 1.
-          },
-  };
+
+  Object obj{argv[1], true, true};
 
   while (!glfwWindowShouldClose(window)) {
     obj.main_loop();
