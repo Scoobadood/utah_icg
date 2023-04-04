@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
-#include "mesh.h"
+#include "mesh_internal.h"
+
 #include <fstream>
 
 class TestObjLoader : public ::testing::Test {

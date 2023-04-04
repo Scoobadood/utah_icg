@@ -1,4 +1,5 @@
 #include "mesh_internal.h"
+#include "gl_common.h"
 
 #include <string>
 #include <map>

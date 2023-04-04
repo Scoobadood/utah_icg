@@ -1,16 +1,6 @@
 #ifndef UTAH_ICG_MESH_H
 #define UTAH_ICG_MESH_H
 
-#ifdef __APPLE__
-
-#include "OpenGL/gl3.h"
-
-#else
-#include "GL/glew.h"
-#include "GL/glext.h"
-#include "GL/gl.h"
-#endif
-
 #include <string>
 
 bool load_obj(const std::string &obj_file_name,

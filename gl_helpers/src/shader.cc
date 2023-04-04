@@ -1,17 +1,9 @@
 #include "shader.h"
+#include "gl_common.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include <spdlog/spdlog-inl.h>
-
-
-#ifdef __APPLE__
-#include "OpenGL/gl3.h"
-#else
-#include "GL/glew.h"
-#include "GL/glext.h"
-#include "GL/gl.h"
-#endif
 
 GLuint make_shader(const GLchar *vertex_shader_source[],
                    const GLchar *geometry_shader_source[],
