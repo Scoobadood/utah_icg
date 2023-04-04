@@ -331,8 +331,6 @@ bool load_obj(const std::string &obj_file_name,
     }
   }
 
-
-  //
   spdlog::info("3. Building VAO, VBO and EBO");
   // VAO
 
@@ -343,10 +341,9 @@ bool load_obj(const std::string &obj_file_name,
   auto num_vertices = gidx;
 
   // Vertex locations
-  GLuint buffs[2];
-  glGenBuffers(2, buffs);
+  glGenBuffers(1, &vbo);
+  glGenBuffers(1, &ebo);
 
-  vbo = buffs[0];
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, vtx_sz * num_vertices, vertex_data.data(), GL_STATIC_DRAW);
   glEnableVertexAttribArray(pos_attr);
@@ -361,7 +358,6 @@ bool load_obj(const std::string &obj_file_name,
     glVertexAttribPointer(tx_attr, 2, GL_FLOAT, GL_FALSE, vtx_sz, (GLvoid *) 24);
   }
 
-  ebo = buffs[1];
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, eidx.size() * sizeof(int32_t), eidx.data(), GL_STATIC_DRAW);
 
