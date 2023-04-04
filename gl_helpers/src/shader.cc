@@ -191,7 +191,6 @@ uint32_t compile_shader(GLenum type, const GLchar *const *source, std::string &c
 }
 
 uint32_t Shader::get_attribute_location(const std::string &attribute_name) {
-  if (!id_) return 0;
-
+  if (!id_) return -1;
   return glGetAttribLocation(id_,attribute_name.c_str());
 }

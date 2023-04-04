@@ -51,8 +51,8 @@ bool parse_face_elements(const std::string &face_elem,
     return false;
   }
 
-  bool normal_idx_present = (idx1 != -1 && ((idx2 == -1) || (idx2 - idx1 > 1)));
-  bool tex_coord_idx_present = (idx2 != -1);
+  bool tex_coord_idx_present = (idx1 != -1 && ((idx2 == -1) || (idx2 - idx1 > 1)));
+  bool normal_idx_present = (idx2 != -1);
 
 
   if (vertex_idx == nullptr) {
@@ -65,30 +65,33 @@ bool parse_face_elements(const std::string &face_elem,
   if (!include_tex_coord && !include_normal) return true;
 
 
-  if (include_normal) {
-    if (normal_idx == nullptr) {
-      spdlog::error("  normal_idx requested but pointer is null");
+
+
+  if (include_tex_coord) {
+    if (tex_coord_idx == nullptr) {
+      spdlog::error("  tex_coord_idx requested but pointer is null");
       return false;
     }
-    if (!normal_idx_present) {
-      spdlog::error("  normal_idx requested but not present: {}", f);
+    if (!tex_coord_idx_present) {
+      spdlog::error("  tex_coord_idx requested but not present: {}", f);
       return false;
     }
-    *normal_idx = (idx2 == -1)
+    *tex_coord_idx = (idx2 == -1)
                   ? stoi(f.substr(idx1 + 1))
                   : stoi(f.substr(idx1 + 1, idx2 - idx1 - 1));
   }
-  if (!include_tex_coord) return true;
+  if (!include_normal) return true;
 
-  if (tex_coord_idx == nullptr) {
-    spdlog::error("  tex_coord_idx requested but pointer is null");
+
+  if (normal_idx == nullptr) {
+    spdlog::error("  normal_idx requested but pointer is null");
     return false;
   }
-  if (!tex_coord_idx_present) {
-    spdlog::error("  tex_coord_idx requested but not present: {}", f);
+  if (!normal_idx_present) {
+    spdlog::error("  normal_idx requested but not present: {}", f);
     return false;
   }
-  *tex_coord_idx = stoi(f.substr(idx2 + 1));
+  *normal_idx = stoi(f.substr(idx2 + 1));
   return true;
 }
 
@@ -289,6 +292,7 @@ bool load_obj(const std::string &obj_file_name,
                       include_textures, &tex_coords)) {
     return false;
   }
+
   spdlog::info("Found {:3} vertices", vertices.size());
   if (include_normals) spdlog::info("      {:3} normals", normals.size());
   if (include_textures) spdlog::info("      {:3} tex_coords", tex_coords.size());
@@ -302,11 +306,13 @@ bool load_obj(const std::string &obj_file_name,
   auto gidx = 0;
   for (const auto &face: faces) {
     for (const auto &face_elem: face) {
+
       auto it = vtx_lookup.find(face_elem);
       if (it != vtx_lookup.end()) {
         eidx.push_back(it->second);
         continue;
       }
+
       // New combo. Create a new vertex.
       auto vidx = get<0>(face_elem);
       vertex_data.push_back(get<0>(vertices.at(vidx)));
