@@ -6,11 +6,14 @@
 class TestObjLoader : public ::testing::Test {
 };
 
-TEST_F(TestObjLoader, parse_3f_fails_with_too_many) {
+TEST_F(TestObjLoader, parse_3f_succeeds_with_warning) {
   std::string txt = "0.1 0.2 0.3 0.4";
   float x, y, z;
   auto actual = parse_3f(txt, x, y, z);
-  EXPECT_FALSE(actual);
+  EXPECT_TRUE(actual);
+  EXPECT_EQ(0.1f, x);
+  EXPECT_EQ(0.2f, y);
+  EXPECT_EQ(0.3f, z);
 }
 
 TEST_F(TestObjLoader, parse_3f_fails_with_too_few) {
@@ -38,11 +41,13 @@ TEST_F(TestObjLoader, parse_3f_handles_empty_string) {
 }
 
 
-TEST_F(TestObjLoader, parse_2f_fails_with_too_many) {
+TEST_F(TestObjLoader, parse_2f_succeeds_with_too_many_with_warning) {
   std::string txt = "0.1 0.2 0.4";
   float x, y;
   auto actual = parse_2f(txt, x, y);
-  EXPECT_FALSE(actual);
+  EXPECT_TRUE(actual);
+  EXPECT_EQ(0.1f, x);
+  EXPECT_EQ(0.2f, y);
 }
 
 TEST_F(TestObjLoader, parse_2f_fails_with_too_few) {
