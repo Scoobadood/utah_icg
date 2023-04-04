@@ -38,6 +38,9 @@ FetchContent_Declare(
         GIT_TAG 0.9.9.8
         GIT_PROGRESS TRUE
 )
+
+
+if(NOT APPLE)
 # FreeGLUT
 add_definitions(-DGL_SILENCE_DEPRECATION)
 FetchContent_Declare(
@@ -46,9 +49,12 @@ FetchContent_Declare(
         GIT_TAG v3.4.0
         GIT_PROGRESS TRUE
 )
+FetchContent_MakeAvailable(freeglut)
+ENDIF(NOT APPLE)
+
 #GLEW
 find_package(GLEW REQUIRED)
-FetchContent_MakeAvailable(googletest spdlog glm freeglut)
+FetchContent_MakeAvailable(googletest spdlog glm)
 
 message(ERROR ${GLEW_INCLUDE_DIRS})
 message(ERROR ${GLEW_LIBRARIES})

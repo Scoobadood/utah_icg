@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "gl_common.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <spdlog/spdlog-inl.h>

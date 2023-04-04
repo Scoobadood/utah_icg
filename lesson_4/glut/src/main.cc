@@ -9,6 +9,7 @@
 #include "object.h"
 
 #include "main.h"
+#include "spdlog/spdlog-inl.h"
 
 struct State {
   std::shared_ptr<Object> obj;
@@ -78,10 +79,19 @@ int main(int argc, char *argv[]) {
                       GLUT_3_2_CORE_PROFILE
   );
 
+
   // Window creation
   glutInitWindowSize(800, 600);
   glutInitWindowPosition(100, 100);
   glutCreateWindow("My window");
+
+#ifndef __APPLE__
+  // Need context before we do this.
+  GLenum err = glewInit();
+  if( GLEW_OK != err) {
+      spdlog::critical("Error: {}", (const char *)glewGetErrorString(err));
+  }
+#endif
 
   // Callbacks - AFTER Window Creation!
   glutKeyboardFunc(keyboard_handler);
