@@ -30,4 +30,5 @@ target_link_libraries(test_obj_loader
         PRIVATE
         GLHelpers
         gtest
+        ${GLEW_LIBRARIES}
         )

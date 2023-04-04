@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 std::vector<std::string> tokenise(const std::string &line, char dlm) {
   using namespace std;
