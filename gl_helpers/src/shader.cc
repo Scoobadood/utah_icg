@@ -21,6 +21,7 @@ Shader::Shader(const GLchar *vertex_shader_source[],
   id_ = make_shader(vertex_shader_source, geometry_shader_source, fragment_shader_source, error_msgs_);
   if (!id_) {
     spdlog::error(error_msgs_);
+    return;
   }
   is_ready_ = true;
 }
