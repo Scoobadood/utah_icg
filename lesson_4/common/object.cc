@@ -18,12 +18,8 @@ namespace {
 layout(location=0) in vec3 pos;
 layout(location=1) in vec3 normal;
 
-uniform float light_int;
-uniform float light_amb;
-uniform vec3 light_pos;
-uniform float alpha;
-
-out vec4 colour;
+out vec3 position;
+smooth out vec3 int_normal;
 
 void main() {
   mat4 view = mat4(-0.70710678118, 0.0, 0.70710678118, 0.0,  // 1. column
@@ -32,20 +28,9 @@ void main() {
                    0.0, 0.0, 0.0, 1.0);
   vec4 p4 = view * vec4(pos, 1.0);
 
-  // Calc diffuse lighting geometry component
-  vec3 light_dir = normalize(light_pos - p4.xyz);
-  float n_dot_w = max(0,dot(light_dir, normal));
-
-  // Calc specular lighting Phong
-  vec3 look = -normalize(p4.xyz);
-  vec3 r = -reflect(light_dir, normal);
-  float r_dot_v = max(0,dot(r, look));
-  float spec_coeff = pow(r_dot_v, alpha);
-
-  vec3 light = light_int * n_dot_w * (vec3(1,0,0) + vec3(1) * spec_coeff ) + light_amb;
-  colour  = vec4(light, 1);
-
   gl_Position = p4;
+  position = p4.xyz;
+  int_normal = normal;
 }
 )"};
 
@@ -54,84 +39,32 @@ void main() {
 
 layout (location=0) out vec4 frag_colour;
 
+uniform float light_int;
+uniform float light_amb;
+uniform vec3 light_pos;
+uniform float alpha;
+
 in vec4 colour;
+in vec3 int_normal;
+in vec3 position;
 
 void main() {
-  frag_colour=colour;
+
+  vec3 nn = normalize(int_normal);
+  // Calc diffuse lighting geometry component
+  vec3 light_dir = normalize(light_pos - position.xyz);
+  float n_dot_w = max(0,dot(light_dir, nn));
+
+  // Calc specular lighting Phong
+  vec3 look = -normalize(position.xyz);
+  vec3 r = -reflect(light_dir, nn);
+  float r_dot_v = max(0,dot(r, look));
+  float spec_coeff = pow(r_dot_v, alpha);
+
+  vec3 light = light_int * n_dot_w * (vec3(1,0,0) + vec3(1) * spec_coeff ) + light_amb;
+  frag_colour=vec4(int_normal, 1);
 }
 )"};
-}
-
-std::string name_for_type(GLenum type) {
-  switch (type) {
-    case GL_BYTE:
-      return "GL_BYTE";
-    case GL_UNSIGNED_BYTE:
-      return "GL_UNSIGNED_BYTE";
-    case GL_SHORT:
-      return "GL_SHORT";
-    case GL_UNSIGNED_SHORT:
-      return "GL_UNSIGNED_SHORT";
-    case GL_INT:
-      return "GL_INT";
-    case GL_UNSIGNED_INT:
-      return "GL_UNSIGNED_INT";
-    case GL_FLOAT:
-      return "GL_FLOAT";
-    case GL_DOUBLE:
-      return "GL_DOUBLE";
-    case GL_FLOAT_VEC2:
-      return "GL_FLOAT_VEC2";
-    case GL_FLOAT_VEC3:
-      return "GL_FLOAT_VEC3";
-    case GL_FLOAT_VEC4:
-      return "GL_FLOAT_VEC4";
-    case GL_INT_VEC2:
-      return "GL_INT_VEC2";
-    case GL_INT_VEC3:
-      return "GL_INT_VEC3";
-    case GL_INT_VEC4:
-      return "GL_INT_VEC4";
-    case GL_BOOL:
-      return "GL_BOOL";
-    case GL_BOOL_VEC2:
-      return "GL_BOOL_VEC2";
-    case GL_BOOL_VEC3:
-      return "GL_BOOL_VEC3";
-    case GL_BOOL_VEC4:
-      return "GL_BOOL_VEC4";
-    case GL_FLOAT_MAT2:
-      return "GL_FLOAT_MAT2";
-    case GL_FLOAT_MAT3:
-      return "GL_FLOAT_MAT3";
-    case GL_FLOAT_MAT4:
-      return "GL_FLOAT_MAT4";
-    case GL_SAMPLER_1D:
-      return "GL_SAMPLER_1D";
-    case GL_SAMPLER_2D:
-      return "GL_SAMPLER_2D";
-    case GL_SAMPLER_3D:
-      return "GL_SAMPLER_3D";
-    default:
-      return fmt::format("UNNOWN ({:04x})", type);
-  }
-}
-void dump_shader(const std::shared_ptr<Shader> &shader) {
-  char buff[1024];
-  int32_t count;
-  GLenum type;
-  GLint size;
-  GLsizei length;
-  glGetProgramiv(shader->id(), GL_ACTIVE_ATTRIBUTES, &count);
-  for( auto i=0; i<count; ++i) {
-    glGetActiveAttrib(shader->id(), i, 1024,&length,&size,&type,buff);
-    spdlog::info( "Attr {:2}: {}  {}, {}", i, buff, size, name_for_type(type));
-  }
-  glGetProgramiv(shader->id(), GL_ACTIVE_UNIFORMS, &count);
-  for( auto i=0; i<count; ++i) {
-    glGetActiveUniform(shader->id(), i, 1024,&length,&size,&type,buff);
-    spdlog::info( "Unif {:2}: {}  {}, {}", i, buff, size, name_for_type(type));
-  }
 }
 
 Object::Object(const std::string &file_name,
@@ -178,7 +111,6 @@ Object::~Object() {
   destroy_buffers();
 }
 
-
 void Object::main_loop() {
   glEnable(GL_DEPTH_TEST);
   glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -189,10 +121,9 @@ void Object::main_loop() {
   shader_->use();
 
   float posx = sin(angle_);
-  float posy = cos(angle_);
   float posz = cos(angle_);
   angle_ += 0.01f;
-  shader_->set_uniform("light_pos", glm::vec3(posx, 0.5, posz));
+  shader_->set_uniform("light_pos", glm::vec3(posx, 1.0, posz));
 
   glPointSize(5.0f);
   glDrawElements(GL_TRIANGLES, num_elements_, GL_UNSIGNED_INT, (void *) nullptr);

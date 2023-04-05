@@ -1,6 +1,9 @@
 #include "shader.h"
 #include "gl_common.h"
+#include "gl_enum_map.h"
 
+#include <sstream>
+#include <iomanip>
 #include <glm/gtc/type_ptr.hpp>
 #include <spdlog/spdlog-inl.h>
 
@@ -204,4 +207,35 @@ uint32_t compile_shader(GLenum type, const GLchar *const *source, std::string &c
 uint32_t Shader::get_attribute_location(const std::string &attribute_name) {
   if (!id_) return -1;
   return glGetAttribLocation(id_, attribute_name.c_str());
+}
+
+std::string Shader::info() const {
+  using namespace std;
+
+  ostringstream os;
+  char buff[1024];
+  int32_t count;
+  GLenum type;
+  GLint size;
+  GLsizei length;
+  glGetProgramiv(id_, GL_ACTIVE_ATTRIBUTES, &count);
+  os << "Attributes" << endl;
+  for (auto i = 0; i < count; ++i) {
+    glGetActiveAttrib(id_, i, 1024, &length, &size, &type, buff);
+    os << "  " << setw(3) << i
+       << " " << setw(3) << size
+       << " " << setw(12) << name_for_enum(type)
+       << " " << buff << endl;
+  }
+  os << endl << "Uniforms" << endl;
+  glGetProgramiv(id_, GL_ACTIVE_UNIFORMS, &count);
+  for (auto i = 0; i < count; ++i) {
+    glGetActiveUniform(id_, i, 1024, &length, &size, &type, buff);
+    os << "  " << setw(3) << i
+       << " " << setw(3) << size
+       << " " << setw(12) << name_for_enum(type)
+       << " " << buff << endl;
+  }
+
+  return os.str();
 }

@@ -49,6 +49,8 @@ public:
 
   inline const std::string &get_error() const { return error_msgs_; }
 
+  std::string info( ) const;
+
 private:
   // The program ID
   uint32_t id_;

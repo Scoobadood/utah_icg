@@ -6,6 +6,7 @@ add_library(GLHelpers
         src/shader.cc include/shader.h
         src/mesh.cc include/mesh.h
         src/string_utils.cc include/string_utils.h
+        src/gl_enum_map.cc include/gl_enum_map.h
         )
 
 target_include_directories(GLHelpers
