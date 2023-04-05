@@ -21,6 +21,7 @@ layout(location=1) in vec3 normal;
 uniform float light_int;
 uniform float light_amb;
 uniform vec3 light_pos;
+uniform float alpha;
 
 out vec4 colour;
 
@@ -31,9 +32,17 @@ void main() {
                    0.0, 0.0, 0.0, 1.0);
   vec4 p4 = view * vec4(pos, 1.0);
 
-  vec3 light_dir = normalize(light_pos - pos);
-  float dp = max(0,dot(light_dir, normal));
-  vec3 light = vec3(light_int * dp + light_amb);
+  // Calc diffuse lighting geometry component
+  vec3 light_dir = normalize(light_pos - p4.xyz);
+  float n_dot_w = max(0,dot(light_dir, normal));
+
+  // Calc specular lighting Phong
+  vec3 look = -normalize(p4.xyz);
+  vec3 r = -reflect(light_dir, normal);
+  float r_dot_v = max(0,dot(r, look));
+  float spec_coeff = pow(r_dot_v, alpha);
+
+  vec3 light = light_int * n_dot_w * (vec3(1,0,0) + vec3(1) * spec_coeff ) + light_amb;
   colour  = vec4(light, 1);
 
   gl_Position = p4;
@@ -159,8 +168,9 @@ Object::Object(const std::string &file_name,
   CHECK_GL_ERROR("load obj");
 
   shader_->set_uniform("light_int", 1.0f);
-  shader_->set_uniform("light_amb", 0.2f);
+  shader_->set_uniform("light_amb", 0.01f);
   shader_->set_uniform("light_pos", glm::vec3(1,1,1));
+  shader_->set_uniform("alpha", 1000.0f);
 }
 
 
@@ -179,9 +189,10 @@ void Object::main_loop() {
   shader_->use();
 
   float posx = sin(angle_);
+  float posy = cos(angle_);
   float posz = cos(angle_);
-  angle_ += 0.05f;
-  shader_->set_uniform("light_pos", glm::vec3(posx,0.75,posz));
+  angle_ += 0.01f;
+  shader_->set_uniform("light_pos", glm::vec3(posx, 0.5, posz));
 
   glPointSize(5.0f);
   glDrawElements(GL_TRIANGLES, num_elements_, GL_UNSIGNED_INT, (void *) nullptr);
