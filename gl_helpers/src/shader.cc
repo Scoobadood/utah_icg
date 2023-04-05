@@ -37,6 +37,7 @@ void Shader::use() const {
     return;
   }
   spdlog::error("Shader is not ready to run");
+  throw std::runtime_error("Shader is not ready to run");
 }
 
 inline GLint get_uniform_loc_with_logging(const char *type, GLuint prog_id, const char *name) {
@@ -45,9 +46,19 @@ inline GLint get_uniform_loc_with_logging(const char *type, GLuint prog_id, cons
   return loc;
 }
 
+void Shader::set_uniform(const std::string &name, const glm::vec2 &vec) const {
+  auto loc = get_uniform_loc_with_logging("vec2", id_, name.c_str());
+  glUniform2fv(loc, 1, glm::value_ptr(vec));
+}
+
 void Shader::set_uniform(const std::string &name, const glm::vec3 &vec) const {
   auto loc = get_uniform_loc_with_logging("vec3", id_, name.c_str());
-  glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(vec));
+  glUniform3fv(loc, 1, glm::value_ptr(vec));
+}
+
+void Shader::set_uniformv4(const std::string &name, const glm::vec4 &vec) const {
+  auto loc = get_uniform_loc_with_logging("vec4", id_, name.c_str());
+  glUniform4fv(loc, 1, glm::value_ptr(vec));
 }
 
 void Shader::set_uniform(const std::string &name, const glm::mat4 &mat) const {
@@ -57,7 +68,7 @@ void Shader::set_uniform(const std::string &name, const glm::mat4 &mat) const {
 
 void Shader::set_uniform(const std::string &name, float value) const {
   auto loc = get_uniform_loc_with_logging("1f", id_, name.c_str());
-  glUniform1f(loc, value);
+  glUniform1f(loc, (GLfloat) value);
 }
 
 void Shader::set_uniform(const std::string &name, int value) const {
@@ -192,5 +203,5 @@ uint32_t compile_shader(GLenum type, const GLchar *const *source, std::string &c
 
 uint32_t Shader::get_attribute_location(const std::string &attribute_name) {
   if (!id_) return -1;
-  return glGetAttribLocation(id_,attribute_name.c_str());
+  return glGetAttribLocation(id_, attribute_name.c_str());
 }

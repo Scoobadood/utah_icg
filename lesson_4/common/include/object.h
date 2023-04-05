@@ -33,6 +33,7 @@ private:
   GLuint ebo_;
   GLuint num_elements_;
   std::shared_ptr<Shader> shader_;
+  float angle_ = 0.0f;
 };
 
 #endif //UTAH_ICG_OBJECT_H

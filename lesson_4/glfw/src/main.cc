@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   glfwSetKeyCallback(window, special_keyboard_handler);
 
 
-  Object obj{argv[1], true, true};
+  Object obj{argv[1], true, false};
 
   while (!glfwWindowShouldClose(window)) {
     obj.main_loop();

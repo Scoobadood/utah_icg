@@ -20,6 +20,9 @@ public:
   // use/activate the shader
   void use() const;
 
+  //
+  int32_t id() const {return id_;}
+
   // get_attribute_location
   uint32_t get_attribute_location(const std::string& attribute_name);
 
@@ -36,7 +39,11 @@ public:
 
   void set_uniform(const std::string &name, uint32_t v0, uint32_t v1) const;
 
+  void set_uniform(const std::string &name, const glm::vec2 &vec) const;
+
   void set_uniform(const std::string &name, const glm::vec3 &vec) const;
+
+  void set_uniformv4(const std::string &name, const glm::vec4 &vec) const;
 
   void set_uniform(const std::string &name, const glm::mat4 &mat) const;
 
