@@ -35,6 +35,7 @@ private:
   std::shared_ptr<Shader> shader_;
   float head_1_angle_ = 0.0f;
   float head_2_angle_ = 0.0f;
+  float head_3_angle_ = 0.0f;
   float view_angle_ = 0.0f;
 };
 
