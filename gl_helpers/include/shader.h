@@ -12,19 +12,32 @@ public:
          const char *fragment_shader_source[],
          const char *geometry_shader_source[] = nullptr);
 
+  // With geometry and source
+  Shader(const char *vertex_shader_source,
+         const char *fragment_shader_source,
+         const char *geometry_shader_source = nullptr);
+
   ~Shader();
 
+  static std::shared_ptr<Shader> from_files(const std::string &vertex_shader_file,
+                                            const std::string &fragment_shader_file);
+
+  static std::shared_ptr<Shader> from_files(const std::string &vertex_shader_file,
+                                            const std::string &fragment_shader_file,
+                                            const std::string &geometry_shader_file);
+
+
   // @return true if the shader is ready.
-  inline bool is_good() const { return is_ready_;}
+  inline bool is_good() const { return is_ready_; }
 
   // use/activate the shader
   void use() const;
 
   //
-  int32_t id() const {return id_;}
+  uint32_t id() const { return id_; }
 
   // get_attribute_location
-  uint32_t get_attribute_location(const std::string& attribute_name);
+  uint32_t get_attribute_location(const std::string &attribute_name) const;
 
   // utility uniform functions
   void set_uniform(const std::string &name, int32_t value) const;
@@ -49,7 +62,7 @@ public:
 
   inline const std::string &get_error() const { return error_msgs_; }
 
-  std::string info( ) const;
+  std::string info() const;
 
 private:
   // The program ID
