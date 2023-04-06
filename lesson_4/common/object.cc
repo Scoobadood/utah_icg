@@ -55,13 +55,13 @@ Object::Object(const std::string &file_name,
   //glm::ortho(-1,1,-1,1);
   shader_->set_uniform("project", project);
   shader_->set_uniform("light_dir", glm::vec3(0, -1, -0.5));
-  shader_->set_uniform("light_int", 0.5f);
+  shader_->set_uniform("light_int", 0.1f);
 
   shader_->set_uniform("spot_light_pos", glm::vec3(0, 0, -1));
-  shader_->set_uniform("spot_light_dir", glm::vec3(0, 0, -1));
+  shader_->set_uniform("spot_light_dir", glm::vec3(0, 0, 1));
   shader_->set_uniform("spot_light_colour", glm::vec3(1,1,1));
   shader_->set_uniform("spot_light_int", 1.f);
-  shader_->set_uniform("spot_light_angle", cosf(4.0f*M_PI/180.0f));
+  shader_->set_uniform("spot_light_angle", cosf(8.0f*M_PI/180.0f));
 }
 
 

@@ -44,7 +44,7 @@ void main() {
     n_ld          = normalize(spot_light_pos - frag_position);
 
     // If this direction is outside of the cone of light then we have no contribution from it.
-    vec3 n_sd          = normalize(-spot_light_dir);
+    vec3 n_sd          = normalize(spot_light_dir);
     float p = dot(n_ld, n_sd);
     float out_beam = 0;
     if( p > spot_light_angle ) out_beam = smoothstep(spot_light_angle, 1,p);
@@ -58,7 +58,7 @@ void main() {
     r_dot_v            = max(0, dot(r, look));
     spec_coeff         = pow(r_dot_v, alpha);
 
-    vec3 spot_spec_light    = ks * spec_coeff * spot_light_int * out_beam  * vec3(1,1,1);
+    vec3 spot_spec_light    = ks * spec_coeff * spot_light_int * out_beam  * spot_light_colour;
     vec3 spot_diff_light    = kd * n_dot_w * spot_light_int * out_beam * colour;
 
     vec3 l2 = spot_spec_light + spot_diff_light;
