@@ -3,6 +3,7 @@
 #include "gl_enum_map.h"
 
 #include <sstream>
+#include <fstream>
 #include <iomanip>
 #include <glm/gtc/type_ptr.hpp>
 #include <spdlog/spdlog-inl.h>
@@ -16,9 +17,9 @@ uint32_t compile_shader(GLenum type, const GLchar *const *source, std::string &c
 
 
 // With geometry
-Shader::Shader(const GLchar *vertex_shader_source[],
-               const GLchar *fragment_shader_source[],
-               const GLchar *geometry_shader_source[]
+Shader::Shader(const char *vertex_shader_source[],
+               const char *fragment_shader_source[],
+               const char *geometry_shader_source[]
 ) {
   is_ready_ = false;
   id_ = make_shader(vertex_shader_source, geometry_shader_source, fragment_shader_source, error_msgs_);
@@ -28,6 +29,15 @@ Shader::Shader(const GLchar *vertex_shader_source[],
   }
   is_ready_ = true;
 }
+
+Shader::Shader(const char *vertex_shader_source,
+               const char *fragment_shader_source,
+               const char *geometry_shader_source
+) : Shader(vertex_shader_source ? (const char *[]) {vertex_shader_source} : nullptr,
+           fragment_shader_source ? (const char *[]) {fragment_shader_source} : nullptr,
+           geometry_shader_source ? (const char *[]) {geometry_shader_source} : nullptr) {
+}
+
 
 Shader::~Shader() {
   glDeleteShader(id_);
@@ -204,7 +214,7 @@ uint32_t compile_shader(GLenum type, const GLchar *const *source, std::string &c
   return 0;
 }
 
-uint32_t Shader::get_attribute_location(const std::string &attribute_name) {
+uint32_t Shader::get_attribute_location(const std::string &attribute_name) const {
   if (!id_) return -1;
   return glGetAttribLocation(id_, attribute_name.c_str());
 }
@@ -238,4 +248,51 @@ std::string Shader::info() const {
   }
 
   return os.str();
+}
+
+
+char *load_file(const std::string &file_name) {
+  using namespace std;
+
+  ifstream f{file_name};
+  if (!f) return nullptr;
+
+  streamoff file_len;
+  f.seekg(0, std::ios::end);
+  file_len = f.tellg();
+  f.seekg(0, std::ios::beg);
+
+  auto buff = new char[file_len];
+  f.read(buff, file_len);
+  f.close();
+  return buff;
+}
+
+std::shared_ptr<Shader> Shader::from_files(const std::string &vertex_shader_file,
+                                           const std::string &fragment_shader_file) {
+  return from_files(vertex_shader_file, fragment_shader_file, "");
+}
+
+std::shared_ptr<Shader> Shader::from_files(const std::string &vertex_shader_file,
+                                           const std::string &fragment_shader_file,
+                                           const std::string &geometry_shader_file) {
+  auto vs_src = load_file(vertex_shader_file);
+  if (!vs_src) {
+    spdlog::error("Couldn't load vertex shader : {}", vertex_shader_file);
+    return nullptr;
+  }
+  auto fs_src = load_file(fragment_shader_file);
+  if (!fs_src) {
+    spdlog::error("Couldn't load fragment shader : {}", fragment_shader_file);
+    return nullptr;
+  }
+  char * gs_src = nullptr;
+  if( !geometry_shader_file.empty()) {
+    gs_src = load_file(geometry_shader_file);
+    if (!gs_src) {
+      spdlog::error("Couldn't load geometry shader : {}", geometry_shader_file);
+      return nullptr;
+    }
+  }
+  return std::make_shared<Shader>(vs_src, fs_src, gs_src);
 }

@@ -117,8 +117,8 @@ TEST_F(TestObjLoader, parse_face_elements_trims_leading_spaces) {
                                     true, &t);
   EXPECT_TRUE(actual);
   EXPECT_EQ(1, v);
-  EXPECT_EQ(2, n);
-  EXPECT_EQ(3, t);
+  EXPECT_EQ(2, t);
+  EXPECT_EQ(3, n);
 }
 
 TEST_F(TestObjLoader, parse_face_elements_trims_trailing_spaces) {
@@ -129,8 +129,26 @@ TEST_F(TestObjLoader, parse_face_elements_trims_trailing_spaces) {
                                     true, &t);
   EXPECT_TRUE(actual);
   EXPECT_EQ(1, v);
-  EXPECT_EQ(2, n);
-  EXPECT_EQ(3, t);
+  EXPECT_EQ(2, t);
+  EXPECT_EQ(3, n);
+}
+
+TEST_F(TestObjLoader, pfe_rejects_request_for_missing_tex_1) {
+  std::string txt = "1";
+  int32_t v, t, n;
+  auto actual = parse_face_elements(txt, &v,
+                                    false, &n,
+                                    true, &t);
+  EXPECT_FALSE(actual);
+}
+
+TEST_F(TestObjLoader, pfe_rejects_request_for_missing_tex_2) {
+  std::string txt = "1//2";
+  int32_t v, t, n;
+  auto actual = parse_face_elements(txt, &v,
+                                    false, &n,
+                                    true, &t);
+  EXPECT_FALSE(actual);
 }
 
 TEST_F(TestObjLoader, pfe_rejects_request_for_missing_norm_1) {
@@ -143,7 +161,7 @@ TEST_F(TestObjLoader, pfe_rejects_request_for_missing_norm_1) {
 }
 
 TEST_F(TestObjLoader, pfe_rejects_request_for_missing_norm_2) {
-  std::string txt = "1//2";
+  std::string txt = "1/2";
   int32_t v, t, n;
   auto actual = parse_face_elements(txt, &v,
                                     true, &n,
@@ -151,43 +169,50 @@ TEST_F(TestObjLoader, pfe_rejects_request_for_missing_norm_2) {
   EXPECT_FALSE(actual);
 }
 
-TEST_F(TestObjLoader, pfe_rejects_request_for_missing_tex_1) {
-  std::string txt = "1/2";
-  int32_t v, t, n;
-  auto actual = parse_face_elements(txt, &v,
-                                    false, &n,
-                                    true, &t);
-  EXPECT_FALSE(actual);
-}
-
-TEST_F(TestObjLoader, pfe_rejects_request_for_missing_tex_2) {
-  std::string txt = "1/2/";
-  int32_t v, t, n;
-  auto actual = parse_face_elements(txt, &v,
-                                    false, &n,
-                                    true, &t);
-  EXPECT_FALSE(actual);
-}
-
-TEST_F(TestObjLoader, pfe_rejects_request_for_missing_tex_3) {
-  std::string txt = "1";
-  int32_t v, t, n;
-  auto actual = parse_face_elements(txt, &v,
-                                    false, &n,
-                                    true, &t);
-  EXPECT_FALSE(actual);
-}
-
-TEST_F(TestObjLoader, pfe_retrieves_tex_with_missing_norm) {
+TEST_F(TestObjLoader, pfe_retrieves_vertex_norm_with_no_tex) {
   std::string txt = "1//3";
+  int32_t v, t, n;
+  auto actual = parse_face_elements(txt, &v,
+                                    true, &n,
+                                    false, &t);
+  EXPECT_TRUE(actual);
+  EXPECT_EQ(1, v);
+  EXPECT_EQ(3, n);
+}
+
+TEST_F(TestObjLoader, pfe_retrieves_vertex_norm_with_tex) {
+  std::string txt = "1/2/3";
+  int32_t v, t, n;
+  auto actual = parse_face_elements(txt, &v,
+                                    true, &n,
+                                    false, &t);
+  EXPECT_TRUE(actual);
+  EXPECT_EQ(1, v);
+  EXPECT_EQ(3, n);
+}
+
+TEST_F(TestObjLoader, pfe_retrieves_vertex_tex_with_no_norm) {
+  std::string txt = "1/2";
   int32_t v, t, n;
   auto actual = parse_face_elements(txt, &v,
                                     false, &n,
                                     true, &t);
   EXPECT_TRUE(actual);
   EXPECT_EQ(1, v);
-  EXPECT_EQ(3, t);
+  EXPECT_EQ(2, t);
 }
+
+TEST_F(TestObjLoader, pfe_retrieves_vertex_tex_with_norm) {
+  std::string txt = "1/2/3";
+  int32_t v, t, n;
+  auto actual = parse_face_elements(txt, &v,
+                                    false, &n,
+                                    true, &t);
+  EXPECT_TRUE(actual);
+  EXPECT_EQ(1, v);
+  EXPECT_EQ(2, t);
+}
+
 
 TEST_F(TestObjLoader, parse_real_file_ok) {
   using namespace std;
@@ -197,7 +222,7 @@ TEST_F(TestObjLoader, parse_real_file_ok) {
   vector<tuple<float, float, float>> normals;
   vector<tuple<float, float>> tex_coords;
 
-  ifstream in("/Users/dave/CLionProjects/utah_icg/gl_helpers/tests/african_head.obj");
+  ifstream in("/Users/dave/CLionProjects/utah_icg/data/african_head.obj");
   auto ok = parse_raw_data(in, vertices, faces, true, &normals, true, &tex_coords);
   EXPECT_TRUE(ok);
 }
