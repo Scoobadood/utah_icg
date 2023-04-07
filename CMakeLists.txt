@@ -24,6 +24,8 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG        v1.x
 )
+include_directories(${spdlog_SOURCE_DIR}/include)
+
 # Google test
 FetchContent_Declare(
         googletest
@@ -54,13 +56,14 @@ ENDIF(NOT APPLE)
 
 #GLEW
 find_package(GLEW REQUIRED)
-FetchContent_MakeAvailable(googletest spdlog glm)
 
-message(ERROR ${GLEW_INCLUDE_DIRS})
-message(ERROR ${GLEW_LIBRARIES})
-
-
-include_directories(${spdlog_SOURCE_DIR}/include)
+# STB For Image libs
+FetchContent_Declare(
+        stb
+        GIT_REPOSITORY https://github.com/nothings/stb.git
+        GIT_TAG        master
+)
+FetchContent_MakeAvailable(googletest spdlog glm stb)
 
 
 ## Supress Apple OpenGL messages

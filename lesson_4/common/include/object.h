@@ -32,7 +32,9 @@ private:
   GLuint vbo_;
   GLuint ebo_;
   GLuint num_elements_;
+  uint32_t texture_id_;
   std::shared_ptr<Shader> shader_;
+  std::shared_ptr<Shader> textured_shader_;
   float head_1_angle_ = 0.0f;
   float head_2_angle_ = 0.0f;
   float head_3_angle_ = 0.0f;
