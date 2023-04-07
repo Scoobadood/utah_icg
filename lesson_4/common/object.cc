@@ -111,22 +111,18 @@ Object::Object(const std::string &file_name,
   //glm::ortho(-1,1,-1,1);
   shader_->set_uniform("project", project);
   shader_->set_uniform("light_dir", glm::vec3(0, -1, -0.5));
-  shader_->set_uniform("light_int", 0.1f);
 
   shader_->set_uniform("spot_light_pos", glm::vec3(0, 0, -1));
   shader_->set_uniform("spot_light_dir", glm::vec3(0, 0, 1));
   shader_->set_uniform("spot_light_colour", glm::vec3(1, 1, 1));
-  shader_->set_uniform("spot_light_int", 1.f);
   shader_->set_uniform("spot_light_angle", cosf(8.0f * M_PI / 180.0f));
 
   textured_shader_->use();
   textured_shader_->set_uniform("project", project);
   textured_shader_->set_uniform("light_dir", glm::vec3(0, -1, -0.5));
-  textured_shader_->set_uniform("light_int", 0.1f);
   textured_shader_->set_uniform("spot_light_pos", glm::vec3(0, 0, -1));
   textured_shader_->set_uniform("spot_light_dir", glm::vec3(0, 0, 1));
   textured_shader_->set_uniform("spot_light_colour", glm::vec3(1, 1, 1));
-  textured_shader_->set_uniform("spot_light_int", 1.f);
   textured_shader_->set_uniform("spot_light_angle", cosf(8.0f * M_PI / 180.0f));
 }
 
@@ -143,6 +139,9 @@ void Object::main_loop() {
   glBindVertexArray(vao_);
 
   shader_->use();
+  shader_->set_uniform("light_int", big_light_on_ ? 1.0f : 0.1f);
+  shader_->set_uniform("spot_light_int", spot_on_ ? 1.f : 0.0f);
+
 
   glm::mat4 view = glm::mat4(1);
   view = glm::translate(view, glm::vec3(0, 0, -10));
@@ -191,6 +190,9 @@ void Object::main_loop() {
   model = glm::translate(model, glm::vec3(1, 0.0, -1));
   model = glm::rotate(model, head_1_angle_, glm::vec3(0, 1, 0));
   textured_shader_->use();
+  textured_shader_->set_uniform("light_int", big_light_on_ ? 1.0f : 0.1f);
+  textured_shader_->set_uniform("spot_light_int", spot_on_ ? 1.f : 0.0f);
+
   textured_shader_->set_uniform("model_view", view * model);
   textured_shader_->set_uniform("kd", 0.8f);
   textured_shader_->set_uniform("ks", 0.f);

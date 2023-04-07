@@ -24,6 +24,9 @@ public:
 
   void main_loop();
 
+  void spot_on_off(bool on_off) {spot_on_ = on_off;}
+  void big_light_on(bool on_off) {big_light_on_ = on_off;}
+
 private:
   void destroy_buffers();
   void init_shader();
@@ -39,6 +42,8 @@ private:
   float head_2_angle_ = 0.0f;
   float head_3_angle_ = 0.0f;
   float view_angle_ = 0.0f;
+  bool spot_on_ = true;
+  bool big_light_on_ = false;
 };
 
 #endif //UTAH_ICG_OBJECT_H

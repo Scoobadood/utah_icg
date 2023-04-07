@@ -22,10 +22,20 @@ void display_handler() {
 
 void keyboard_handler(uint8_t key, int32_t x, int32_t y) {
   switch (key) {
-    case 'q':
-    case 'Q':
+    case 's':
+      g_state.obj->spot_on_off(false);
+      break;
+    case 'S':
+      g_state.obj->spot_on_off(true);
+      break;
+    case 'm':
+      g_state.obj->big_light_on(false);
+      break;
+    case'M':
+      g_state.obj->big_light_on(true);
       break;
   }
+
   glutPostRedisplay();
 }
 
@@ -102,7 +112,7 @@ int main(int argc, char *argv[]) {
   glutReshapeFunc(window_reshape_handler);
   glutIdleFunc(idle_handler);
 
-  g_state.obj = std::make_shared<Object>(argv[1], true, false);
+  g_state.obj = std::make_shared<Object>(argv[1], true, true);
 
   glutDisplayFunc(display_handler);
 

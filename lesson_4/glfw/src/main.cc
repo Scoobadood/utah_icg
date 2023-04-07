@@ -12,7 +12,21 @@
 
 #include "main.h"
 
-void special_keyboard_handler(GLFWwindow *window, int key, int scancode, int action, int mods) {}
+void special_keyboard_handler(GLFWwindow *window, int key, int scancode, int action, int mods) {
+  if( key == GLFW_KEY_S && action == GLFW_PRESS ) {
+    if( mods & GLFW_MOD_SHIFT) {
+      ((Object *) glfwGetWindowUserPointer(window))->spot_on_off(true);
+    } else {
+      ((Object *) glfwGetWindowUserPointer(window))->spot_on_off(false);
+    }
+  } else if( key == GLFW_KEY_M && action == GLFW_PRESS ) {
+    if( mods & GLFW_MOD_SHIFT) {
+      ((Object *) glfwGetWindowUserPointer(window))->big_light_on(true);
+    } else {
+      ((Object *) glfwGetWindowUserPointer(window))->big_light_on(false);
+    }
+  }
+}
 
 void mouse_handler(GLFWwindow *window, int button, int action, int mods) {}
 
@@ -70,6 +84,8 @@ int main(int argc, char *argv[]) {
 
 
   Object obj{argv[1], true, true};
+
+  glfwSetWindowUserPointer(window,&obj);
 
   while (!glfwWindowShouldClose(window)) {
     obj.main_loop();
