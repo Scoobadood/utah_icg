@@ -102,24 +102,7 @@ int main(int argc, char *argv[]) {
   glutReshapeFunc(window_reshape_handler);
   glutIdleFunc(idle_handler);
 
-  g_state.obj = std::make_shared<Object>(
-          std::vector<float>{
-                  -0.8, 0.4, 0.0,
-                  0.8, 0.4, 0.0,
-                  0.8, -0.4, 0.0,
-                  -0.8, 0.4, 0.0,
-                  0.8, -0.4, 0.0,
-                  -0.8, -0.4, 0.0,
-          },
-          std::vector<float>{
-                  1., 0., 0., 1., // Red
-                  1., 1., 0., 1., //Yellow
-                  0., 1., 0., 1.,
-                  0., 1., 1., 1.,
-                  0., 0., 1., 1.,
-                  1., 0., 1., 1.
-          }
-  );
+  g_state.obj = std::make_shared<Object>(argv[1], true, false);
 
   glutDisplayFunc(display_handler);
 
