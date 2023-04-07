@@ -262,9 +262,10 @@ char *load_file(const std::string &file_name) {
   file_len = f.tellg();
   f.seekg(0, std::ios::beg);
 
-  auto buff = new char[file_len];
+  auto buff = new char[file_len+1];
   f.read(buff, file_len);
   f.close();
+  buff[file_len] = 0;
   return buff;
 }
 
