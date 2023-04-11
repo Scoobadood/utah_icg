@@ -5,7 +5,6 @@ add_library(Lesson4 SHARED
 target_include_directories(Lesson4
         PUBLIC
         include
-        ${stb_SOURCE_DIR}
         )
 
 target_link_libraries(Lesson4

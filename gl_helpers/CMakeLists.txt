@@ -4,6 +4,7 @@ add_definitions(-DGL_SILENCE_DEPRECATION)
 add_library(GLHelpers
         SHARED
         src/shader.cc include/shader.h
+        src/texture.cc include/texture.h
         src/mesh.cc include/mesh.h
         src/string_utils.cc include/string_utils.h
         src/gl_enum_map.cc include/gl_enum_map.h
@@ -14,6 +15,7 @@ target_include_directories(GLHelpers
         ${spdlog_SOURCE_DIR}/include
         PUBLIC
         include
+        ${stb_SOURCE_DIR}
         )
 
 target_link_libraries(GLHelpers

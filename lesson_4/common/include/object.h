@@ -6,6 +6,8 @@
 
 #ifdef __APPLE__
 #include "OpenGL/gl3.h"
+#include "texture.h"
+
 #else
 #include "GL/glew.h"
 #include "GL/glext.h"
@@ -35,7 +37,7 @@ private:
   GLuint vbo_;
   GLuint ebo_;
   GLuint num_elements_;
-  uint32_t texture_id_;
+  std::shared_ptr<Texture> texture_;
   std::shared_ptr<Shader> shader_;
   std::shared_ptr<Shader> textured_shader_;
   float head_1_angle_ = 0.0f;

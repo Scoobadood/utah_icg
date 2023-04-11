@@ -1,14 +1,11 @@
 #include "object.h"
 #include "spdlog/spdlog-inl.h"
 #include "mesh.h"
+#include "texture.h"
+
 #include "gl_common.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
-
-#define STB_IMAGE_IMPLEMENTATION
-
-#include "stb_image.h"
-
 
 GLenum glerr;
 #define CHECK_GL_ERROR(txt)   \
@@ -19,38 +16,6 @@ throw std::runtime_error("GLR"); \
 
 
 int32_t load_texture(const std::string &texture_filename) {
-  uint32_t tx_id = 0;
-
-  glActiveTexture(GL_TEXTURE0);
-  glGenTextures(1, &tx_id);
-  glBindTexture(GL_TEXTURE_2D, tx_id);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-
-  int32_t width, height, channels;
-  uint8_t *image_data = stbi_load(texture_filename.c_str(), &width, &height, &channels, 3);
-
-  // Flip image
-  for (auto row = 0; row < height/2; ++row) {
-    for (auto col = 0; col < width; ++col) {
-      auto from_idx = (row * width + col) * 3;
-      auto to_idx = ((height - row - 1) * width + col) * 3;
-      for (auto c = 0; c < 3; ++c) {
-        uint8_t t = image_data[from_idx + c];
-        image_data[from_idx + c] = image_data[to_idx + c];
-        image_data[to_idx + c] = t;
-      }
-    }
-  }
-  // load file to texture
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
-               GL_RGB, GL_UNSIGNED_BYTE, image_data);
-  stbi_image_free(image_data);
-  return tx_id;
 }
 
 Object::Object(const std::string &file_name,
@@ -66,7 +31,7 @@ Object::Object(const std::string &file_name,
     return;
   }
 
-  texture_id_ = load_texture("african_head_diffuse.tga");
+  texture_ = std::make_shared<Texture>("african_head_diffuse.tga");
 
   CHECK_GL_ERROR("shader build");
 
@@ -189,6 +154,7 @@ void Object::main_loop() {
   model = glm::mat4(1.0);
   model = glm::translate(model, glm::vec3(1, 0.0, -1));
   model = glm::rotate(model, head_1_angle_, glm::vec3(0, 1, 0));
+  texture_->BindToTextureUnit(0);
   textured_shader_->use();
   textured_shader_->set_uniform("light_int", big_light_on_ ? 1.0f : 0.1f);
   textured_shader_->set_uniform("spot_light_int", spot_on_ ? 1.f : 0.0f);
@@ -218,5 +184,4 @@ Object::destroy_buffers() {
   glDeleteBuffers(1, &vbo_);
   glDeleteBuffers(1, &ebo_);
   glDeleteBuffers(1, &vao_);
-  glDeleteTextures(1, &texture_id_);
 }
