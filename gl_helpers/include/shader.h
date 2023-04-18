@@ -44,6 +44,8 @@ public:
 
   void set_uniform(const std::string &name, float value) const;
 
+  void set_uniform(const std::string &name, int32_t count, float * value) const;
+
   void set_uniform(const std::string &name, float f0, float f1, float f2) const;
 
   void set_uniform(const std::string &name, int32_t count, const int32_t *v4) const;
@@ -56,9 +58,11 @@ public:
 
   void set_uniform(const std::string &name, const glm::vec3 &vec) const;
 
-  void set_uniformv4(const std::string &name, const glm::vec4 &vec) const;
+  void set_uniform(const std::string &name, const glm::vec4 &vec) const;
 
   void set_uniform(const std::string &name, const glm::mat4 &mat) const;
+
+  void set_uniform(const std::string &name, int32_t count, const glm::vec3 *vecs) const;
 
   inline const std::string &get_error() const { return error_msgs_; }
 

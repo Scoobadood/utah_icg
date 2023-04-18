@@ -69,7 +69,7 @@ void Shader::set_uniform(const std::string &name, const glm::vec3 &vec) const {
   glUniform3fv(loc, 1, glm::value_ptr(vec));
 }
 
-void Shader::set_uniformv4(const std::string &name, const glm::vec4 &vec) const {
+void Shader::set_uniform(const std::string &name, const glm::vec4 &vec) const {
   auto loc = get_uniform_loc_with_logging("vec4", id_, name.c_str());
   glUniform4fv(loc, 1, glm::value_ptr(vec));
 }
@@ -88,6 +88,12 @@ void Shader::set_uniform(const std::string &name, int value) const {
   auto loc = get_uniform_loc_with_logging("1i", id_, name.c_str());
   glUniform1i(loc, value);
 }
+
+void Shader::set_uniform(const std::string &name, int32_t count, float *value) const {
+  auto loc = get_uniform_loc_with_logging("1fv", id_, name.c_str());
+  glUniform1fv(loc, count, value);
+}
+
 
 void Shader::set_uniform(const std::string &name, int32_t count, const GLint *v4) const {
   auto loc = get_uniform_loc_with_logging("4iv", id_, name.c_str());
@@ -109,6 +115,12 @@ void Shader::set_uniform(const std::string &name, float f0, float f1, float f2) 
   auto loc = get_uniform_loc_with_logging("3f", id_, name.c_str());
   glUniform3f(loc, f0, f1, f2);
 }
+
+void Shader::set_uniform(const std::string &name, int32_t count, const glm::vec3 *vecs) const {
+  auto loc = get_uniform_loc_with_logging("3fv", id_, name.c_str());
+  glUniform3fv(loc, count, glm::value_ptr(vecs[0]));
+}
+
 
 /**
  * Compile vertex and fragment shaders and link.
@@ -262,7 +274,7 @@ char *load_file(const std::string &file_name) {
   file_len = f.tellg();
   f.seekg(0, std::ios::beg);
 
-  auto buff = new char[file_len+1];
+  auto buff = new char[file_len + 1];
   f.read(buff, file_len);
   f.close();
   buff[file_len] = 0;
@@ -287,8 +299,8 @@ std::shared_ptr<Shader> Shader::from_files(const std::string &vertex_shader_file
     spdlog::error("Couldn't load fragment shader : {}", fragment_shader_file);
     return nullptr;
   }
-  char * gs_src = nullptr;
-  if( !geometry_shader_file.empty()) {
+  char *gs_src = nullptr;
+  if (!geometry_shader_file.empty()) {
     gs_src = load_file(geometry_shader_file);
     if (!gs_src) {
       spdlog::error("Couldn't load geometry shader : {}", geometry_shader_file);
