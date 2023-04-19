@@ -55,6 +55,22 @@ void special_keyboard_handler(GLFWwindow *window, int key, int scancode, int act
     ((Object *) glfwGetWindowUserPointer(window))->toggle_spot(3);
     return;
   }
+  if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+    ((Object *) glfwGetWindowUserPointer(window))->toggle_spot(4);
+    return;
+  }
+  if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
+    ((Object *) glfwGetWindowUserPointer(window))->toggle_spot(5);
+    return;
+  }
+  if (key == GLFW_KEY_7 && action == GLFW_PRESS) {
+    ((Object *) glfwGetWindowUserPointer(window))->toggle_spot(6);
+    return;
+  }
+  if (key == GLFW_KEY_8 && action == GLFW_PRESS) {
+    ((Object *) glfwGetWindowUserPointer(window))->toggle_spot(7);
+    return;
+  }
   if (key == GLFW_KEY_M && action == GLFW_PRESS) {
     if (mods & GLFW_MOD_SHIFT) {
       ((Object *) glfwGetWindowUserPointer(window))->big_light_on(true);
