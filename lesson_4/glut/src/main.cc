@@ -23,16 +23,14 @@ void display_handler() {
 void keyboard_handler(uint8_t key, int32_t x, int32_t y) {
   switch (key) {
     case '1':
-      g_state.obj->toggle_spot(0);
-      break;
     case '2':
-      g_state.obj->toggle_spot(1);
-      break;
     case '3':
-      g_state.obj->toggle_spot(2);
-      break;
     case '4':
-      g_state.obj->toggle_spot(3);
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+      g_state.obj->toggle_spot(key - '1');
       break;
     case 'm':
       g_state.obj->big_light_on(false);
