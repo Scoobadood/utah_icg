@@ -18,10 +18,15 @@ uniform float spot_light_int[4];// Light intensity.
 uniform vec3 spot_light_colour;// Light intensity.
 uniform float spot_light_angle; // half beam angle
 
+uniform sampler2D head_texture; // Tx
+
 in vec3 frag_normal;
 in vec3 frag_position;
+in vec2 frag_tex_coord;
 
 void main() {
+    vec3 base_colour = texture(head_texture, frag_tex_coord).rgb;
+
     vec3 n_n           = normalize(frag_normal);
     vec3 n_ld          = normalize(-light_dir);
 
@@ -35,8 +40,8 @@ void main() {
     float spec_coeff   = pow(r_dot_v, alpha);
 
     vec3 spec_light    = ks * spec_coeff * light_int * vec3(1,1,1);
-    vec3 ambient_light = ka * light_int * colour;
-    vec3 diff_light    = kd * n_dot_w * light_int * colour;
+    vec3 ambient_light = ka * light_int * base_colour;
+    vec3 diff_light    = kd * n_dot_w * light_int * base_colour;
     vec3 l1 = diff_light + spec_light;
 
     // Now do the spotlights
@@ -61,9 +66,12 @@ void main() {
         spec_coeff         = pow(r_dot_v, alpha);
 
         spot_spec_light = spot_spec_light + (spot_light_int[i] * ks * spec_coeff * vec3(1,1,1) * beam_pct); //spot_spec_light + ks * spec_coeff * spot_light_int[i] * out_beam  * spot_light_colour;
-        spot_diff_light = spot_diff_light + (colour * spot_light_int[i] * kd * n_dot_w * beam_pct);
+        spot_diff_light = spot_diff_light + (base_colour * spot_light_int[i] * kd * n_dot_w * beam_pct);
     }
 
+
     vec3 l2 = spot_spec_light + spot_diff_light;
+
+
     frag_colour        = vec4(l1+l2, 1);
 }

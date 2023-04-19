@@ -22,17 +22,50 @@ void display_handler() {
 
 void keyboard_handler(uint8_t key, int32_t x, int32_t y) {
   switch (key) {
-    case 's':
-      g_state.obj->spot_on_off(false);
+    case '1':
+      g_state.obj->toggle_spot(0);
       break;
-    case 'S':
-      g_state.obj->spot_on_off(true);
+    case '2':
+      g_state.obj->toggle_spot(1);
+      break;
+    case '3':
+      g_state.obj->toggle_spot(2);
+      break;
+    case '4':
+      g_state.obj->toggle_spot(3);
       break;
     case 'm':
       g_state.obj->big_light_on(false);
       break;
-    case'M':
+    case 'M':
       g_state.obj->big_light_on(true);
+      break;
+
+    case '-':
+      g_state.obj->set_view_dist(g_state.obj->view_dist() - 5.0f);
+      break;
+
+    case '+':
+      g_state.obj->set_view_dist(g_state.obj->view_dist() + 5.0f);
+      break;
+
+    case 'Z':
+      g_state.obj->set_view_dir(Object::POS_Z);
+      break;
+    case 'z':
+      g_state.obj->set_view_dir(Object::NEG_Z);
+      break;
+    case 'X':
+      g_state.obj->set_view_dir(Object::POS_X);
+      break;
+    case 'x':
+      g_state.obj->set_view_dir(Object::NEG_X);
+      break;
+    case 'Y':
+      g_state.obj->set_view_dir(Object::POS_Y);
+      break;
+    case 'y':
+      g_state.obj->set_view_dir(Object::NEG_Y);
       break;
   }
 
