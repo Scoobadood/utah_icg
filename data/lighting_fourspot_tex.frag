@@ -12,9 +12,9 @@ uniform vec3  colour;
 uniform vec3 light_dir;// From light. Invert for dir to light
 uniform float light_int;// Light intensity.
 
-uniform vec3 spot_light_pos[4]; // From light. Invert for dir to light
-uniform vec3 spot_light_dir[4]; // Facing of main axis of light
-uniform float spot_light_int[4];// Light intensity.
+uniform vec3 spot_light_pos[8]; // From light. Invert for dir to light
+uniform vec3 spot_light_dir[8]; // Facing of main axis of light
+uniform float spot_light_int[8];// Light intensity.
 uniform vec3 spot_light_colour;// Light intensity.
 uniform float spot_light_angle; // half beam angle
 
@@ -48,7 +48,7 @@ void main() {
     vec3 spot_spec_light = vec3(0);
     vec3 spot_diff_light = vec3(0);
 
-    for ( int i=0; i<4; ++i ) {
+    for ( int i=0; i<8; ++i ) {
         n_ld            = normalize(spot_light_pos[i] - frag_position);
         n_dot_w         = max(0, dot(n_ld, n_n));
 

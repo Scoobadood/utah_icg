@@ -35,7 +35,7 @@ public:
   void main_loop();
 
   void toggle_spot(int32_t spot_id) {
-    if (spot_id < 0 || spot_id > 3) return;
+    if (spot_id < 0 || spot_id >= NUM_SPOTS) return;
     spot_on_[spot_id] = 1.0f - spot_on_[spot_id];
     spdlog::info("Spot {} {}", spot_id, spot_on_[spot_id] ? "on" : "off");
   }
@@ -64,7 +64,6 @@ private:
   float head_angle_[NUM_HEADS]{0.0f, 15.0f, 30.0f, 45.0f};
   ViewDir view_from_ = NEG_Z;
   float view_dist_ = 20.0f;
-  float spot_on_[4]{0, 0, 0, 0};
   bool big_light_on_ = true;
   float head_alpha_[NUM_HEADS]{100.0f, 1000.0f, 10.0f, 10.0f};
   glm::vec3 head_position_[NUM_HEADS]{{-1, 0, -1},
@@ -77,9 +76,11 @@ private:
                                         {0.0f, 0.0f, 0.7f}
   };
 
-  const static int32_t NUM_SPOTS = 4;
+  const static int32_t NUM_SPOTS = 8;
   glm::vec3 spot_light_pos_[NUM_SPOTS];
   glm::vec3 spot_light_dir_[NUM_SPOTS];
+  float spot_on_[NUM_SPOTS];
+
 };
 
 #endif //UTAH_ICG_OBJECT_H

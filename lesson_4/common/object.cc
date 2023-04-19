@@ -109,21 +109,22 @@ Object::Object(const std::string &file_name,
   glm::mat4 project = glm::perspective(glm::radians(fov), 1.0f, 0.1f, 35.0f);
 
   // Initialise spot attributes to be overhead
-  for (int i = 0; i < 4; i++) {
-    spot_light_pos_[i] = head_position_[i] + glm::vec3(0, 2, 0);
+  for (int i = 0; i < NUM_HEADS; i++) {
+    spot_light_pos_[i] = head_position_[i] + glm::vec3(0, 3.5, 0);
     spot_light_dir_[i] = glm::vec3{0, -1, 0};
+    spot_light_pos_[i + 4] = (head_position_[i] + head_position_[i]+ head_position_[i]);
+    spot_light_dir_[i + 4] = -head_position_[i];
+    spot_on_[i] = spot_on_[i+4] = 0.0f;
   }
 
   shader_->use();
   shader_->set_uniform("project", project);
   shader_->set_uniform("light_dir", glm::vec3(0, -1, -0.5));
-  shader_->set_uniform("spot_light_colour", glm::vec3(1, 1, 1));
   shader_->set_uniform("spot_light_angle", (float) (45.0f * M_PI / 180.0f));
 
   textured_shader_->use();
   textured_shader_->set_uniform("project", project);
   textured_shader_->set_uniform("light_dir", glm::vec3(0, -1, -0.5));
-  textured_shader_->set_uniform("spot_light_colour", glm::vec3(1, 1, 1));
   textured_shader_->set_uniform("spot_light_angle", (float) (45.0f * M_PI / 180.0f));
 }
 
@@ -142,11 +143,10 @@ void Object::main_loop() {
   glm::mat4 view = view_for_dir(view_from_, view_dist_);
 
   // Set spotlight cam positions
-  glm::vec3 slp[4];
-  glm::vec3 sld[4];
+  glm::vec3 slp[NUM_SPOTS];
+  glm::vec3 sld[NUM_SPOTS];
   glm::mat3 dv = transpose(inverse(view));
-
-  for (auto i = 0; i < 4; ++i) {
+  for (auto i = 0; i < NUM_SPOTS; ++i) {
     // Implicit vec3 construction here
     slp[i] = view * glm::vec4(spot_light_pos_[i], 1);
     sld[i] = dv * spot_light_dir_[i];
@@ -156,9 +156,9 @@ void Object::main_loop() {
   shader_->use();
   shader_->set_uniform("view", view);
   shader_->set_uniform("light_int", big_light_on_ ? 1.0f : 0.1f);
-  shader_->set_uniform("spot_light_int", 4, spot_on_);
-  shader_->set_uniform("spot_light_pos", 4, slp);
-  shader_->set_uniform("spot_light_dir", 4, sld);
+  shader_->set_uniform("spot_light_int", NUM_SPOTS, spot_on_);
+  shader_->set_uniform("spot_light_pos", NUM_SPOTS, slp);
+  shader_->set_uniform("spot_light_dir", NUM_SPOTS, sld);
 
   for (auto i = 0; i < NUM_HEADS - 1; ++i) {
     head_position_[i].x = M_SQRT2 * cos(rot_angle_ + (i * M_PI_2));
@@ -188,9 +188,9 @@ void Object::main_loop() {
   textured_shader_->use();
   textured_shader_->set_uniform("view", view);
   textured_shader_->set_uniform("light_int", big_light_on_ ? 1.0f : 0.1f);
-  textured_shader_->set_uniform("spot_light_int", 4, spot_on_);
-  textured_shader_->set_uniform("spot_light_pos", 4, slp);
-  textured_shader_->set_uniform("spot_light_dir", 4, sld);
+  textured_shader_->set_uniform("spot_light_int", NUM_SPOTS, spot_on_);
+  textured_shader_->set_uniform("spot_light_pos", NUM_SPOTS, slp);
+  textured_shader_->set_uniform("spot_light_dir", NUM_SPOTS, sld);
 
   textured_shader_->set_uniform("model", model);
   textured_shader_->set_uniform("kd", 0.8f);
