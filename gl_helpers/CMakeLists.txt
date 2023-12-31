@@ -17,7 +17,7 @@ target_include_directories(GLHelpers
         PUBLIC
         include
         ${stb_SOURCE_DIR}
-        )
+)
 
 target_link_libraries(GLHelpers
         PUBLIC
@@ -34,5 +34,5 @@ target_link_libraries(test_obj_loader
         PRIVATE
         GLHelpers
         gtest
-        ${GLEW_LIBRARIES}
+        GLEW::GLEW
         )

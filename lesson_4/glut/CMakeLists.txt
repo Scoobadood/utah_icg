@@ -17,5 +17,5 @@ target_link_libraries(test_glut
         PRIVATE
         ${GLUT_LIBRARY}
         Lesson4
-        ${GLEW_LIBRARIES}
-        )
+        GLEW::GLEW
+)
